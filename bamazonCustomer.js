@@ -48,12 +48,13 @@ function runInventory() {
       ]).then(function(answer){
         var chosenItem;
         for (var i = 0; i < res.length; i++) {
-          if (res[i].item_name === answer.choice) {
+          if (res[i].product_name === answer.choice) {
             chosenItem = res[i];
           }
         }
-        if (chosenItem.stock_quantity < parseInt(answer.purchase)) {
-          console.log("Insufficient quantity!  Please make another selection.");
+        if(chosenItem.stock_quantity < parseInt(answer.purchase)) {
+          console.log("Insufficient quantity!  Please try again.");
+          setTimeout(runInventory, 500);
         }
       });
   });
