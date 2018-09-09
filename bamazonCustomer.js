@@ -52,7 +52,26 @@ function runInventory() {
             chosenItem = res[i];
           }
         }
-        if(chosenItem.stock_quantity < parseInt(answer.purchase)) {
+        if(chosenItem.stock_quantity >= parseFloat(answer.purchase)) {
+          connection.query(
+            "UPDATE product SET ? WHERE ?",
+            [
+              {
+                stock_quantity: chosenItem.stock_quantity - answer.purchase
+              },
+              {
+                item_id: chosenItem.item_id
+              }
+            ],
+            function(err, result) {
+              //if(err) throw err;
+              var totalDue = parseFloat(answer.purchase * chosenItem.price);
+              console.log(result.affectedRows + " record(s) updated");
+              console.log("Purchase success!" + "\nYour total is: " + "$" + totalDue);
+              setTimeout(runInventory, 500);
+            }
+          );
+        } else {
           console.log("Insufficient quantity!  Please try again.");
           setTimeout(runInventory, 500);
         }
