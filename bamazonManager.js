@@ -51,15 +51,82 @@ connection.connect(function(err) {
   };
 
   function productSearch() {
-
+    connection.query("SELECT * FROM product;", function(err, res) {
+        for(var i = 0; i < res.length; i++) {
+            console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + "$" + res[i].price + " | " + "Qty: " + res[i].stock_quantity);
+        }
+    runSearch();
+    });
   };
 
   function lowStockSearch() {
-
+    console.log("These products are low in inventory:");
+    connection.query("SELECT * FROM product;", function(err, res) {
+        for(var i = 0; i < res.length; i++) {
+            if(res[i].stock_quantity < 5) {
+                console.log(res[i].product_name + " | " + res[i].stock_quantity)
+            }
+        }
+    runSearch();
+    });
   };
 
   function addStock() {
-
+    connection.query("SELECT * FROM product", function(err, res) {
+      if (err) throw err;
+      inquirer
+        .prompt([
+          {
+            name: "productChoice",
+            type: "list",
+            choices: function() {
+              var choiceArray = [];
+              for (var i = 0; i < res.length; i++) {
+                choiceArray.push(res[i].product_name);
+              }
+              return choiceArray;
+            },
+            message: "Which product would you like to restock?"
+          },
+          {
+            name: "restock",
+            type: "input",
+            message: "Please enter the quantity to restock this product:",
+            validate: function(value) {
+              if (isNaN(value) === false) {
+                return true;
+              }
+              console.log(" <-- PLEASE INPUT NUMERICAL VALUES ONLY")
+              return false;
+            }
+          }
+        ]).then(function(answer){
+          var restockItem;
+          for (var i = 0; i < res.length; i++) {
+            if (res[i].product_name === answer.productChoice) {
+              restockItem = res[i];
+            }
+          }
+          var replenish = restockItem.stock_quantity + parseInt(answer.restock);
+          connection.query(
+            "UPDATE product SET ? WHERE ?",
+              [
+                {
+                  stock_quantity: replenish
+                },
+                {
+                  item_id: restockItem.item_id
+                }
+              ],
+            function(err, result) {
+                //if(err) throw err;
+                console.log(result.affectedRows + " record(s) updated");
+                console.log("This product has been restocked!");
+                setTimeout(runSearch, 500);
+              }
+            );
+        });
+    });
   };
 
   function addProduct() {
