@@ -65,12 +65,28 @@ function runInventory() {
             ],
             function(err, result) {
               //if(err) throw err;
-              var totalDue = parseFloat(answer.purchase * chosenItem.price);
-              console.log(result.affectedRows + " record(s) updated");
+              //console.log(result.affectedRows + " record(s) updated");
               console.log("Purchase success!" + "\nYour total is: " + "$" + totalDue);
-              setTimeout(runInventory, 500);
+              //setTimeout(runInventory, 500);
             }
           );
+          var totalDue = parseFloat(answer.purchase * chosenItem.price);
+          connection.query(
+            "UPDATE product SET ? WHERE ?", 
+            [
+              {
+                product_sales: totalDue
+              },
+              {
+                item_id: chosenItem.item_id
+              }
+            ],
+            function(err, result) {
+              //if(err) throw err;
+              //console.log(result.affectedRows + " record(s) updated");
+              setTimeout(runInventory, 500);
+            }
+          )
         } else {
           console.log("Insufficient quantity!  Please try again.");
           setTimeout(runInventory, 500);
