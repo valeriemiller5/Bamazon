@@ -1,6 +1,9 @@
 DROP DATABASE IF EXISTS bamazon_db;
 CREATE DATABASE bamazon_db;
 
+DROP TABLE IF EXISTS departments;
+DROP TABLE IF EXISTS product;
+
 USE bamazon_db;
 
 CREATE TABLE product (
@@ -16,10 +19,11 @@ CREATE TABLE product (
 CREATE TABLE departments (
 	department_id INTEGER(11) AUTO_INCREMENT NOT NULL,
     department_name VARCHAR(100) NOT NULL,
-	over_head_costs DECIMAL(10,2) NOT NULL,
+	over_head_costs DECIMAL(65,2) NOT NULL,
 	PRIMARY KEY(department_id)
 );
 
+/* Pre-selected items inserted into product table */
 INSERT INTO product SET product_name="Cashmere Sweater", department_name="Clothing", price=50.00, stock_quantity="10", product_sales="0";
 INSERT INTO product SET product_name="Bicycle", department_name="Sporting Goods", price=75.50, stock_quantity="55", product_sales="0";
 INSERT INTO product SET product_name="Dishware Set", department_name="Home Furnishings", price=250.70, stock_quantity="5", product_sales="0";
@@ -31,8 +35,18 @@ INSERT INTO product SET product_name="Diskman", department_name="Antiques", pric
 INSERT INTO product SET product_name="Lego Set", department_name="Toys", price=25.00, stock_quantity="756", product_sales="0";
 INSERT INTO product SET product_name="Guess Jeans", department_name="Clothing", price=150.00, stock_quantity="689", product_sales="0";
 
+/* Pre-selected items inserted into departments table */
+INSERT INTO departments SET department_name="Clothing", over_head_costs=10000.00;
+INSERT INTO departments SET department_name="Sporting Goods", over_head_costs=15000.00;
+INSERT INTO departments SET department_name="Home Furnishings", over_head_costs=20000.00;
+INSERT INTO departments SET department_name="Games/Entertainment", over_head_costs=10000.00;
+INSERT INTO departments SET department_name="Pet Supplies", over_head_costs=10000.00;
+INSERT INTO departments SET department_name="Electronics", over_head_costs=30000.00;
+INSERT INTO departments SET department_name="Antiques", over_head_costs=10000.00;
+INSERT INTO departments SET department_name="Toys", over_head_costs=15000.00;
+
 SELECT * FROM product;
 
 SELECT * FROM departments;
 
-SELECT DISTINCT product.department_name FROM product INNER JOIN departments ON product.department_name = departments.departmen_name;
+SELECT DISTINCT department_id, product.department_name, over_head_costs, product_sales FROM product INNER JOIN departments ON product.department_name = departments.department_name;
