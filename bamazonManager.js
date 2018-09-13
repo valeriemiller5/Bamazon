@@ -63,7 +63,7 @@ connection.connect(function(err) {
     console.log("These products are low in inventory:");
     connection.query("SELECT * FROM product;", function(err, res) {
         for(var i = 0; i < res.length; i++) {
-            if(res[i].stock_quantity < 5) {
+            if(res[i].stock_quantity < 6) {
                 console.log(res[i].product_name + " | " + res[i].stock_quantity)
             }
         }
@@ -130,55 +130,65 @@ connection.connect(function(err) {
   };
 
   function addProduct() {
-    inquirer
-        .prompt([
-        {
-            name: "product",
-            type: "input",
-            message: "What product would you like to add?"
-        },
-        {
-            name: "department",
-            type: "input",
-            message: "In which department does this item belong?"
-        },
-        {
-            name: "price",
-            type: "input",
-            message: "What is the price of this item?",
-            validate: function(value) {
-              if (isNaN(value) === false) {
-                return true;
+    connection.query("SELECT * FROM product", function(err, res) {
+      if(err) throw err;
+      inquirer
+          .prompt([
+          {
+              name: "product",
+              type: "input",
+              message: "What product would you like to add?"
+          },
+          {
+              name: "department",
+              type: "list",
+              message: "In which department does this item belong?",
+              choices: function() {
+                var choiceArray = [];
+              for (var i = 0; i < res.length; i++) {
+                choiceArray.push(res[i].department_name);
               }
-              return false;
-            }
-        },
-        {
-            name: "quantity",
-            type: "input",
-            message: "Please enter the quantity of this item:",
-            validate: function(value) {
-              if (isNaN(value) === false) {
-                return true;
+              return choiceArray;
               }
-              return false;
-            }
-        }
-    ])
-    .then(function(answer) {
-      connection.query(
-        "INSERT INTO product SET ?",
-        {
-          product_name: answer.product,
-          department_name: answer.department,
-          price: answer.price,
-          stock_quantity: answer.quantity
-        },
-        function(err) {
-          if (err) throw err;
-          console.log("This product has been added to the inventory.");
-          runSearch();
-        }
-      );
+          },
+          {
+              name: "price",
+              type: "input",
+              message: "What is the price of this item?",
+              validate: function(value) {
+                if (isNaN(value) === false) {
+                  return true;
+                }
+                return false;
+              }
+          },
+          {
+              name: "quantity",
+              type: "input",
+              message: "Please enter the quantity of this item:",
+              validate: function(value) {
+                if (isNaN(value) === false) {
+                  return true;
+                }
+                return false;
+              }
+          }
+      ])
+      .then(function(answer) {
+        connection.query(
+          "INSERT INTO product SET ?",
+          {
+            product_name: answer.product,
+            department_name: answer.department,
+            price: answer.price,
+            stock_quantity: answer.quantity
+          },
+          function(err) {
+            if (err) throw err;
+            console.log("This product has been added to the inventory.");
+            setTimeout(runSearch, 500);
+          }
+        );
+      });
     });
   };
