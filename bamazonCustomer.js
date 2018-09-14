@@ -1,5 +1,16 @@
 var mysql = require("mysql");
 var inquirer = require ("inquirer");
+var Table = require("cli-table");
+var colors = require("colors");
+colors.setTheme({
+    bgOne: 'bgCyan',
+    info: 'green',
+    header: 'cyan',
+    welcome: 'magenta',
+    warn: 'yellow',
+    error: 'red',
+    bold: 'bold'
+  });
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -9,7 +20,7 @@ var connection = mysql.createConnection({
     database: "bamazon_db"
   });
 
-console.log("Welcome to Bamazon!" + "\nPlease wait while available items load...");
+console.log("WELCOME TO BAMAZON!".bold.magenta + "\nPlease wait while available items load...");
 
 connection.connect(function(err) {
     if (err) throw err;
@@ -24,14 +35,43 @@ function runInventory() {
         {
           name: "choice",
           type: "rawlist",
+          message: "Please enter the id number of the item you would like to purchase:",
           choices: function() {
+            var product = {
+              id: [],
+              prodName: [],
+              deptName: [],
+              price: [],
+              stock: []
+            };
+      
+            var table = new Table({
+              head: ["Item ID".header, "Product".header, "Department".header, "Price".header, "Available Stock".header], 
+              colWidths: [20, 20, 20, 20, 20]
+            });
+            
+            for(var i = 0; i < res.length; i++) {
+                product.id.push(res[i].item_id);
+                product.prodName.push(res[i].product_name); 
+                product.deptName.push(res[i].department_name);
+                product.price.push(res[i].price);
+                product.stock.push(res[i].stock_quantity);
+            };
+            
+            for(var j = 0; j < product.id.length && product.prodName.length && product.deptName.length && product.price.length && product.stock.length; j++) {
+            table.push(
+                  [product.id[j], product.prodName[j], product.deptName[j], "$"+product.price[j], product.stock[j]],
+                  //['First value', 'Second value', 'Third value', 'Fourth value', 'Fifth value']
+            )
+            };
+            console.log(table.toString());
+            
             var choiceArray = [];
             for (var i = 0; i < res.length; i++) {
               choiceArray.push(res[i].product_name);
             }
             return choiceArray;
-          },
-          message: "Please enter the id number of the item you would like to purchase:"
+          }
         },
         {
           name: "purchase",
@@ -67,7 +107,7 @@ function runInventory() {
               //if(err) throw err;
               //console.log(result.affectedRows + " record(s) updated");
               console.log("Purchase success!" + "\nYour total is: " + "$" + totalDue);
-              //setTimeout(runInventory, 500);
+              setTimeout(runInventory, 500);
             }
           );
           var totalDue = parseFloat(answer.purchase * chosenItem.price);
@@ -94,3 +134,4 @@ function runInventory() {
       });
   });
 };
+  

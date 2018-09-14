@@ -1,5 +1,14 @@
 var mysql = require("mysql");
 var inquirer = require ("inquirer");
+var Table = require("cli-table");
+var colors = require("colors");
+colors.setTheme({
+    bgOne: 'bgCyan',
+    info: 'green',
+    header: 'cyan',
+    warn: 'yellow',
+    error: 'red'
+  });
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -26,7 +35,8 @@ connection.connect(function(err) {
           "View Products for Sale",
           "View Low Inventory",
           "Add to Inventory",
-          "Add New Product"
+          "Add New Product", 
+          "Quit"
         ]
       })
       .then(function(answer) {
@@ -46,28 +56,49 @@ connection.connect(function(err) {
         case "Add New Product":
           addProduct();
           break;
+        
+        case "Quit":
+          console.log("Goodbye!");
+          connection.end();
+          break;
         }
       });
   };
 
   function productSearch() {
     connection.query("SELECT * FROM product;", function(err, res) {
-        for(var i = 0; i < res.length; i++) {
-            console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + "$" + res[i].price + " | " + "Qty: " + res[i].stock_quantity);
-        }
-    runSearch();
+      var table = new Table({
+        head: ["item_id".header, "product_name".header, "department_name".header, "price".header, "stock_quantity".header], 
+        colWidths: [20, 20, 20, 20, 20]
+      });
+
+      for(var i = 0; i < res.length; i++) {
+        table.push(
+          [res[i].item_id, res[i].product_name, res[i].department_name, "$"+res[i].price, res[i].stock_quantity]
+        )
+      };
+      console.log(table.toString());
+      setTimeout(runSearch, 500);
     });
   };
 
   function lowStockSearch() {
-    console.log("These products are low in inventory:");
+    console.log("These products are low in inventory:".warn);
     connection.query("SELECT * FROM product;", function(err, res) {
-        for(var i = 0; i < res.length; i++) {
-            if(res[i].stock_quantity < 6) {
-                console.log(res[i].product_name + " | " + res[i].stock_quantity)
-            }
-        }
-    runSearch();
+      var table = new Table({
+        head: ["product_name".header, "stock_quantity".header], 
+        colWidths: [50, 50]
+      });
+
+      for(var i = 0; i < res.length; i++) {
+          if(res[i].stock_quantity < 6) {
+            table.push(
+              [res[i].product_name, res[i].stock_quantity]
+            )
+          }
+        };
+        console.log(table.toString());
+        setTimeout(runSearch, 500);
     });
   };
 

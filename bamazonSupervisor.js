@@ -4,14 +4,9 @@ var Table = require("cli-table");
 var colors = require("colors");
 colors.setTheme({
     bgOne: 'bgCyan',
-    input: 'grey',
-    verbose: 'cyan',
-    prompt: 'grey',
     info: 'green',
-    data: 'grey',
     header: 'cyan',
     warn: 'yellow',
-    debug: 'blue',
     error: 'red'
   });
 
