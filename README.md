@@ -14,10 +14,10 @@ The package.json is included in the Github repository.  In order to run this app
 ### mysql
 `npm install mysql`
 ### cli-table
-This package renders a simple, clean-looking table that makes viewing the Bamazon items easier to see.
+This package renders a simple, clean-looking table that makes viewing the Bamazon items easier to see.\
 `npm install cli-table`
 ### colors
-This package adds color and font-weight to command line text for easier viewing.
+This package adds color and font-weight to command line text for easier viewing.\
 `npm install colors`
 
 ## Running the tests
