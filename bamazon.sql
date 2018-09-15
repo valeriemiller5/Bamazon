@@ -12,7 +12,7 @@ CREATE TABLE product (
     department_name VARCHAR(100) NOT NULL,
 	price DECIMAL(10,2) NOT NULL,
     stock_quantity INT(100) NOT NULL,
-    product_sales DECIMAL(65,2),
+    product_sales DECIMAL(65,2) NOT NULL,
 	PRIMARY KEY(item_id)
 );
 
@@ -36,17 +36,17 @@ INSERT INTO product SET product_name="Lego Set", department_name="Toys", price=2
 INSERT INTO product SET product_name="Guess Jeans", department_name="Clothing", price=150.00, stock_quantity=689, product_sales=0;
 
 /* Pre-selected items inserted into departments table */
-INSERT INTO departments SET department_name="Clothing", over_head_costs=10000.00;
-INSERT INTO departments SET department_name="Sporting Goods", over_head_costs=15000.00;
-INSERT INTO departments SET department_name="Home Furnishings", over_head_costs=20000.00;
-INSERT INTO departments SET department_name="Games/Entertainment", over_head_costs=10000.00;
-INSERT INTO departments SET department_name="Pet Supplies", over_head_costs=10000.00;
-INSERT INTO departments SET department_name="Electronics", over_head_costs=30000.00;
-INSERT INTO departments SET department_name="Antiques", over_head_costs=10000.00;
-INSERT INTO departments SET department_name="Toys", over_head_costs=15000.00;
+INSERT INTO departments SET department_name="Clothing", over_head_costs=1000.00;
+INSERT INTO departments SET department_name="Sporting Goods", over_head_costs=1500.00;
+INSERT INTO departments SET department_name="Home Furnishings", over_head_costs=2000.00;
+INSERT INTO departments SET department_name="Games/Entertainment", over_head_costs=1000.00;
+INSERT INTO departments SET department_name="Pet Supplies", over_head_costs=1000.00;
+INSERT INTO departments SET department_name="Electronics", over_head_costs=3000.00;
+INSERT INTO departments SET department_name="Antiques", over_head_costs=1000.00;
+INSERT INTO departments SET department_name="Toys", over_head_costs=1500.00;
 
 SELECT * FROM product;
 
 SELECT * FROM departments;
 
-SELECT DISTINCT department_id, departments.department_name, over_head_costs, product_sales FROM product INNER JOIN departments ON product.department_name = departments.department_name;
+SELECT DISTINCT department_id, departments.department_name, over_head_costs, product_sales FROM departments INNER JOIN product ON departments.department_name = product.department_name;

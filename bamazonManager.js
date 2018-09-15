@@ -6,8 +6,10 @@ colors.setTheme({
     bgOne: 'bgCyan',
     info: 'green',
     header: 'cyan',
+    welcome: 'magenta',
     warn: 'yellow',
-    error: 'red'
+    error: 'red',
+    bold: 'bold'
   });
 
 var connection = mysql.createConnection({
@@ -18,7 +20,7 @@ var connection = mysql.createConnection({
     database: "bamazon_db"
   });
 
-console.log("Hello, Manager.  Please make a selection.");
+console.log("Hello, Manager.  Please make a selection.".bold.header);
 
 connection.connect(function(err) {
     if (err) throw err;
@@ -58,7 +60,7 @@ connection.connect(function(err) {
           break;
         
         case "Quit":
-          console.log("Goodbye!");
+          console.log("Goodbye!".bold.info);
           connection.end();
           break;
         }
@@ -127,7 +129,7 @@ connection.connect(function(err) {
               if (isNaN(value) === false) {
                 return true;
               }
-              console.log(" <-- PLEASE INPUT NUMERICAL VALUES ONLY")
+              console.log(" <-- PLEASE INPUT NUMERICAL VALUES ONLY".error)
               return false;
             }
           }
@@ -212,7 +214,8 @@ connection.connect(function(err) {
             product_name: answer.product,
             department_name: answer.department,
             price: answer.price,
-            stock_quantity: answer.quantity
+            stock_quantity: answer.quantity,
+            product_sales: 0
           },
           function(err) {
             if (err) throw err;

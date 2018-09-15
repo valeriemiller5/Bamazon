@@ -109,7 +109,7 @@ function runInventory() {
             function(err, result) {
               //if(err) throw err;
               //console.log(result.affectedRows + " record(s) updated");
-              console.log("Purchase success!" + "\nYour total is: " + "$" + totalDue);
+              console.log(("Purchase success!" + "\nYour total is: " + "$" + totalDue).bold.welcome);
               //setTimeout(runInventory, 1000);
               setTimeout(quit, 1500);
             }

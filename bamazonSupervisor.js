@@ -3,12 +3,14 @@ var inquirer = require ("inquirer");
 var Table = require("cli-table");
 var colors = require("colors");
 colors.setTheme({
-    bgOne: 'bgCyan',
-    info: 'green',
-    header: 'cyan',
-    warn: 'yellow',
-    error: 'red'
-  });
+  bgOne: 'bgCyan',
+  info: 'green',
+  header: 'cyan',
+  welcome: 'magenta',
+  warn: 'yellow',
+  error: 'red',
+  bold: 'bold'
+});
 
 
 var connection = mysql.createConnection({
@@ -49,7 +51,7 @@ connection.connect(function(err) {
           break;
 
         case "Quit":
-          console.log("Goodbye!");
+          console.log("Goodbye!".bold.info);
           connection.end();
           break;
         }
@@ -57,7 +59,7 @@ connection.connect(function(err) {
   };
 
   function salesByDept() {
-    connection.query("SELECT DISTINCT department_id, departments.department_name, over_head_costs, product_sales FROM product INNER JOIN departments ON product.department_name = departments.department_name;", function(err, res) {
+    connection.query("SELECT DISTINCT department_id, departments.department_name, over_head_costs, product_sales FROM departments INNER JOIN product ON departments.department_name = product.department_name;", function(err, res) {
       var dept = {
         id: [],
         name: [],
