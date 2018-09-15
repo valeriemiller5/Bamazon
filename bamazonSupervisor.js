@@ -34,7 +34,8 @@ connection.connect(function(err) {
         message: "What would you like to do?",
         choices: [
           "View Product Sales by Department",
-          "Create New Department"
+          "Create New Department",
+          "Quit"
         ]
       })
       .then(function(answer) {
@@ -46,12 +47,17 @@ connection.connect(function(err) {
         case "Create New Department":
           createDept();
           break;
+
+        case "Quit":
+          console.log("Goodbye!");
+          connection.end();
+          break;
         }
       });
   };
 
   function salesByDept() {
-    connection.query("SELECT DISTINCT department_id, product.department_name, over_head_costs, product_sales FROM product INNER JOIN departments ON product.department_name = departments.department_name;", function(err, res) {
+    connection.query("SELECT DISTINCT department_id, departments.department_name, over_head_costs, product_sales FROM product INNER JOIN departments ON product.department_name = departments.department_name;", function(err, res) {
       var dept = {
         id: [],
         name: [],
@@ -79,9 +85,42 @@ connection.connect(function(err) {
       )
       };
       console.log(table.toString());
+      setTimeout(runSearch, 2000);
   });
 };
 
   function createDept() {
-
+    inquirer
+      .prompt([
+        {
+          name: "department",
+          type: "input",
+          message:"Enter the name of the department you wish to create:"
+        },
+        {
+          name: "overhead",
+          type: "input",
+          message: "What is the overhead cost for this department?",
+          validate: function(value) {
+            if (isNaN(value) === false) {
+              return true;
+            }
+            console.log(" <-- PLEASE INPUT NUMERICAL VALUES ONLY")
+            return false;
+          }
+        }
+      ]).then(function(answer) {
+        connection.query(
+          "INSERT INTO departments SET ?",
+          {
+            department_name: answer.department,
+            over_head_costs: answer.overhead
+          },
+          function(err) {
+            if (err) throw err;
+            console.log("The following department has been added: " + answer.department + ", " + "Cost: $" + answer.overhead);
+            setTimeout(runSearch, 2000);
+          }
+        );
+      })
   };
